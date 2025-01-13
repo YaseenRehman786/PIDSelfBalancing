@@ -72,14 +72,14 @@ void onFeedback(Get_Encoder_Estimates_msg_t& msg, void* user_data) {
 
 void onCanMessage(const CanMsg& msg) {
   for (auto odrive : odrives) {
-    onReceive(msg, *odrive);
+    onReceive(msg, *odrive);L
   }
 }
 
 // PID Constants
-float Kp = 6.73; // Proportional gain 0.042
-float Ki = 1.0; // Integral gain
-float Kd = 0.8; // Derivative gain
+float Kp = 6.73; // Proportional gain 0.042 //5.6
+float Ki = 0.06; // Integral gain //0.06
+float Kd = 0.03; // Derivative gain //0.00
 
 // PID Variables
 bool initialPitchset = false;
@@ -263,4 +263,28 @@ void loop(){
 
     previousError = currentError;
     lastTime = currentTime;
+
+if (Serial.available() > 0) {
+        String input = Serial.readStringUntil('\n');
+        if (input.startsWith("Kp=")) {
+            Kp = input.substring(3).toFloat();
+            Serial.print("Kp updated to: ");
+            Serial.println(Kp);
+        }
+        if (input.startsWith("Ki=")) {
+            Ki = input.substring(3).toFloat();
+            Serial.print("Ki updated to: ");
+            Serial.println(Ki);
+        }
+        if (input.startsWith("Kd=")) {
+            Kd = input.substring(3).toFloat();
+            Serial.print("Kd updated to: ");
+            Serial.println(Kd);
+        }
+    }
+
+Serial.println(Kp);
+Serial.println(Ki);
+Serial.println(Kd);
+
 }
