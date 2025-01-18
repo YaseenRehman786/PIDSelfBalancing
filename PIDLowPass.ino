@@ -72,7 +72,7 @@ void onFeedback(Get_Encoder_Estimates_msg_t& msg, void* user_data) {
 
 void onCanMessage(const CanMsg& msg) {
   for (auto odrive : odrives) {
-    onReceive(msg, *odrive);L
+    onReceive(msg, *odrive);
   }
 }
 
@@ -103,6 +103,7 @@ float smoothedYaw = 0.0;
 float smoothedRoll= 0.0;
 float alpha = 0.8;  // Smoothing factor (0 to 1)
 float pitch;
+float MAX_CONTROL_OUTPUT=10;
 
 void setup() {
     Serial.begin(115200);
@@ -250,6 +251,14 @@ void loop(){
     currentError = targetAngle - currentPitch;
     integral += currentError * deltaTime; // Integrate error
     derivative = (currentError - previousError) / deltaTime; // Derive error
+    
+    
+    if (controlOutput > MAX_CONTROL_OUTPUT) {
+    integral = integral - (controlOutput - MAX_CONTROL_OUTPUT) * deltaTime;  // Prevent integral from accumulating
+  } else if (controlOutput < -MAX_CONTROL_OUTPUT) {
+    integral = integral - (controlOutput + MAX_CONTROL_OUTPUT) * deltaTime;  // Prevent integral from accumulating
+  }
+    
     controlOutput = (Kp * currentError) + (Ki * integral) + (Kd * derivative);
     Serial.print("Control Output: ");
     Serial.println(controlOutput);
