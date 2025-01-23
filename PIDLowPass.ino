@@ -77,13 +77,13 @@ void onCanMessage(const CanMsg& msg) {
 }
 
 // PID Constants
-float Kp = 7.0; // Proportional gain 0.042 //5.6
+float Kp = 5.7; // Proportional gain 0.042 //5.6
 float Ki = 0.00; // Integral gain //0.06
-float Kd = 0.00; // Derivative gain //0.00
+float Kd = 0.06; // Derivative gain //0.00
 
 // PID Variables
 bool initialPitchset = false;
-float targetAngle = 0.11; // Target angle for balancing (0 degrees)
+float targetAngle = 0.09; // Target angle for balancing (0 degrees)
 float currentError = 0, previousError = 0;
 float integral = 0, derivative = 0;
 float controlOutput = 0;
@@ -260,6 +260,15 @@ void loop(){
   }
     
     controlOutput = (Kp * currentError) + (Ki * integral) + (Kd * derivative);
+    Serial.print("Kp: ");
+    Serial.println(Kp * currentError);
+    
+    Serial.print("Ki: ");
+    Serial.println(Ki * integral);
+    
+    Serial.print("Kd: ");
+    Serial.println(Kd * derivative);
+
     Serial.print("Control Output: ");
     Serial.println(controlOutput);
     Serial.print("Error: ");
@@ -272,6 +281,10 @@ void loop(){
 
     previousError = currentError;
     lastTime = currentTime;
+    Serial.print("Previous Error:");
+    Serial.println(previousError);
+    Serial.print("Delta Time:");
+    Serial.println(deltaTime);
 
 if (Serial.available() > 0) {
         String input = Serial.readStringUntil('\n');
