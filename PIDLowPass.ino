@@ -77,9 +77,9 @@ void onCanMessage(const CanMsg& msg) {
 }
 
 // PID Constants
-float Kp = 5.7; // Proportional gain 0.042 //5.6
-float Ki = 0.00; // Integral gain //0.06
-float Kd = 0.06; // Derivative gain //0.00
+float Kp = 6.15; // Proportional gain 0.042 //5.6
+float Ki = 3.075; // Integral gain //0.06
+float Kd = 0.3075; // Derivative gain //0.00
 
 // PID Variables
 bool initialPitchset = false;
@@ -288,17 +288,17 @@ void loop(){
 
 if (Serial.available() > 0) {
         String input = Serial.readStringUntil('\n');
-        if (input.startsWith("Kp=")) {
+        if (input.startsWith("kp=")) {
             Kp = input.substring(3).toFloat();
             Serial.print("Kp updated to: ");
             Serial.println(Kp);
         }
-        if (input.startsWith("Ki=")) {
+        if (input.startsWith("ki=")) {
             Ki = input.substring(3).toFloat();
             Serial.print("Ki updated to: ");
             Serial.println(Ki);
         }
-        if (input.startsWith("Kd=")) {
+        if (input.startsWith("kd=")) {
             Kd = input.substring(3).toFloat();
             Serial.print("Kd updated to: ");
             Serial.println(Kd);
