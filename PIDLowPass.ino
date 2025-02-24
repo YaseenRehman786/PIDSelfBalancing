@@ -165,8 +165,8 @@ void setup() {
       delay(10);
       pumpEvents(can_intf);
     }
-  odrv0.setLimits(5867,10); //(float velocity_limit, float current_soft_max
-  odrv1.setLimits(5867,10); //(float velocity_limit, float current_soft_max
+  //odrv0.setLimits(5867,10); //(float velocity_limit, float current_soft_max
+  //odrv1.setLimits(5867,10); //(float velocity_limit, float current_soft_max
   }
 
   Serial.println("ODrives running!");
@@ -219,8 +219,8 @@ void loop(){
   deltaTime = (currentTime - lastTime) / 1000.0; // Calculate time elapsed in seconds
   
   pumpEvents(can_intf);
-  odrv0.setTorque(100); //send torque setpoint to Odrive0
-  odrv1.setTorque(100); //send torque setpoint to Odrive1
+  //odrv0.setTorque(100); //send torque setpoint to Odrive0
+  //odrv1.setTorque(100); //send torque setpoint to Odrive1
   
   if (!DMPReady) return;
   if (mpu.dmpGetCurrentFIFOPacket(FIFOBuffer)) { 
@@ -253,13 +253,16 @@ void loop(){
     derivative = (currentError - previousError) / deltaTime; // Derive error
     
     
-    if (controlOutput > MAX_CONTROL_OUTPUT) {
-    integral = integral - (controlOutput - MAX_CONTROL_OUTPUT) * deltaTime;  // Prevent integral from accumulating
-  } else if (controlOutput < -MAX_CONTROL_OUTPUT) {
-    integral = integral - (controlOutput + MAX_CONTROL_OUTPUT) * deltaTime;  // Prevent integral from accumulating
-  }
+  
     
     controlOutput = (Kp * currentError) + (Ki * integral) + (Kd * derivative);
+
+    if (controlOutput > MAX_CONTROL_OUTPUT) {
+     integral = integral - (controlOutput - MAX_CONTROL_OUTPUT) * deltaTime;  // Prevent integral from accumulating
+    } else if (controlOutput < -MAX_CONTROL_OUTPUT) {
+     integral = integral - (controlOutput + MAX_CONTROL_OUTPUT) * deltaTime;  // Prevent integral from accumulating
+    }
+    
     Serial.print("Kp: ");
     Serial.println(Kp * currentError);
     
