@@ -140,6 +140,12 @@ void onCanMessage(const CanMsg& msg) {
   }
 }
 
+
+
+
+float position = 0.0;
+
+
 void setup() {
   Serial.begin(115200);
   // Wait for up to 3 seconds for Serial connection
@@ -237,28 +243,57 @@ void setup() {
 //   }
 // }
 
-void loop() {
-  pumpEvents(can_intf); // Process incoming CAN messages
+// void loop() {
+//   pumpEvents(can_intf); // Process incoming CAN messages
 
-  // Check if user has entered a new command via the Serial Monitor
-  if (Serial.available() > 0) {
-    // Read the input until newline
-    String input = Serial.readStringUntil('\n');
-    input.trim();  // Remove any whitespace
-    if (input.length() > 0) {
-      // Convert the input to a float
-      float position = input.toFloat();
+//   // Check if user has entered a new command via the Serial Monitor
+//   if (Serial.available() > 0) {
+//     // Read the input until newline
+//     String input = Serial.readStringUntil('\n');
+//     input.trim();  // Remove any whitespace
+//     if (input.length() > 0) {
+//       // Convert the input to a float
+//       float position = input.toFloat();
+//       float position2 = position *-1;
+//       Serial.print("Position 2 is ");
+//       Serial.println(position2);
+
+//       Serial.print("Setting ODrive positions to: ");
+//       Serial.println(position);
+
+//       // Send the position command to both ODrives
+//       // Here, velocity feedforward is set to 0.
+//     }
+//   }
+//       odrv0.setPosition(position, 0.0f);
+//       odrv1.setPosition(position2, 0.0f);
+// }
+
+
+
+void loop (){
+
+    pumpEvents(can_intf); // Process incoming CAN messages
+
+if (Serial.available() > 0) {
+        String input = Serial.readStringUntil('\n');
+        if (input.startsWith("p=")) {
+            position = input.substring(2).toFloat();
+            Serial.print("Kp updated to: ");
+            Serial.println(position);
+        }
+}
+
+
       float position2 = position *-1;
-      Serial.print("Position 2 is ");
-      Serial.println(position2);
 
-      Serial.print("Setting ODrive positions to: ");
-      Serial.println(position);
-
-      // Send the position command to both ODrives
-      // Here, velocity feedforward is set to 0.
       odrv0.setPosition(position, 0.0f);
       odrv1.setPosition(position2, 0.0f);
-    }
-  }
-}
+      
+      Serial.print("position 1: ");
+      Serial.println(position);
+
+      Serial.print("position 2: ");
+      Serial.println(position2);
+
+}     
